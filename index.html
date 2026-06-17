@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Costos Impresión 3D</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- styles.css -->
+    <link rel="stylesheet" href="style.css">
+    <!-- html2pdf.js via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    <path d="M12 22.08V12"></path>
+                    <path d="M7 5v3h3"></path>
+                    <circle cx="12" cy="12" r="3" stroke-dasharray="2 2"></circle>
+                </svg>
+                <h1>3D Cost Studio</h1>
+            </div>
+            <nav class="nav-tabs">
+                <button class="tab-btn active" data-tab="tab-calculator">
+                    <svg viewBox="0 0 24 24" class="tab-icon"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2zm0 8H7v-2h10v2z"/></svg>
+                    <span>Calculadora</span>
+                </button>
+                <button class="tab-btn" data-tab="tab-filaments">
+                    <svg viewBox="0 0 24 24" class="tab-icon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"/></svg>
+                    <span>Filamentos</span>
+                </button>
+                <button class="tab-btn" data-tab="tab-printers">
+                    <svg viewBox="0 0 24 24" class="tab-icon"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+                    <span>Impresoras</span>
+                </button>
+                <button class="tab-btn" data-tab="tab-settings">
+                    <svg viewBox="0 0 24 24" class="tab-icon"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                    <span>Ajustes</span>
+                </button>
+            </nav>
+            <div class="theme-toggle-area">
+                <button id="theme-toggle-btn" class="icon-btn" aria-label="Cambiar tema">
+                    <svg class="sun-icon" viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.02.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-12.37c-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41zm-12.37 12.37c-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41z"/></svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24"><path d="M12.3 22h-.1c-5.5 0-10-4.5-10-10C2.2 6.8 6.4 2.5 11.8 2c.6-.1 1.2.4 1.1 1-.1.5-.5.9-1 1-3.8.7-6.7 4-6.7 8.1 0 4.5 3.6 8.1 8.1 8.1 3.5 0 6.6-2.3 7.7-5.6.2-.5.7-.8 1.2-.7.6.1 1 .7.8 1.3C21.4 19.3 17.1 22 12.3 22z"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <main class="app-main">
+            
+            <!-- TAB: CALCULATOR -->
+            <div id="tab-calculator" class="tab-content active">
+                <div class="grid-calculator">
+                    <!-- Form Panel -->
+                    <section class="card glass form-panel">
+                        <h2 class="section-title">Parámetros del Proyecto</h2>
+                        <form id="calc-form">
+                            <!-- Filamento -->
+                            <div class="form-group">
+                                <label for="calc-filament">Material / Filamento</label>
+                                <div class="select-with-btn">
+                                    <select id="calc-filament" required>
+                                        <!-- Carga dinámica -->
+                                    </select>
+                                    <button type="button" class="btn-icon" id="quick-add-filament-btn" title="Añadir Filamento">
+                                        <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Peso -->
+                            <div class="form-group">
+                                <label for="calc-weight">Peso Estimado de la Pieza (gramos)</label>
+                                <div class="input-unit">
+                                    <input type="number" id="calc-weight" min="0" step="0.1" placeholder="Ej. 150" required>
+                                    <span class="unit">g</span>
+                                </div>
+                            </div>
+
+                            <!-- Impresora -->
+                            <div class="form-group">
+                                <label for="calc-printer">Impresora 3D</label>
+                                <div class="select-with-btn">
+                                    <select id="calc-printer" required>
+                                        <!-- Carga dinámica -->
+                                    </select>
+                                    <button type="button" class="btn-icon" id="quick-add-printer-btn" title="Añadir Impresora">
+                                        <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Producción en Lote -->
+                            <div class="form-section-divider">Producción en Lote</div>
+                            <div class="form-group">
+                                <label for="calc-qty">Cantidad Total de Piezas</label>
+                                <input type="number" id="calc-qty" min="1" value="1" required>
+                            </div>
+                            <div class="grid-2-col">
+                                <div class="form-group">
+                                    <label for="calc-pieces-bed">Piezas por Cama / Lote</label>
+                                    <input type="number" id="calc-pieces-bed" min="1" value="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="calc-waste-bed">Desperdicio por Cama</label>
+                                    <div class="input-unit">
+                                        <input type="number" id="calc-waste-bed" min="0" value="0" required>
+                                        <span class="unit">g</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="calc-time-mode">El tiempo de impresión ingresado es:</label>
+                                <select id="calc-time-mode">
+                                    <option value="piece">Por Pieza Individual</option>
+                                    <option value="bed">Por Cama / Lote Completo</option>
+                                </select>
+                            </div>
+
+                            <!-- Tiempo de Impresión -->
+                            <div class="form-group">
+                                <label>Tiempo Estimado de Impresión</label>
+                                <div class="time-inputs">
+                                    <div class="input-unit">
+                                        <input type="number" id="calc-time-hours" min="0" placeholder="Horas" required>
+                                        <span class="unit">h</span>
+                                    </div>
+                                    <div class="input-unit">
+                                        <input type="number" id="calc-time-minutes" min="0" max="59" placeholder="Minutos" required>
+                                        <span class="unit">m</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Preparación y Diseño -->
+                            <div class="form-group">
+                                <label for="calc-prep-time">Preparación y Slicing (horas)</label>
+                                <div class="input-unit">
+                                    <input type="number" id="calc-prep-time" min="0" step="0.25" placeholder="Ej. 0.5" required>
+                                    <span class="unit">h</span>
+                                </div>
+                            </div>
+
+                            <!-- Post Procesado -->
+                            <div class="form-section-divider">Post-procesamiento</div>
+                            <div class="grid-2-col">
+                                <div class="form-group">
+                                    <label for="calc-post-time">Tiempo de Post-procesado</label>
+                                    <div class="input-unit">
+                                        <input type="number" id="calc-post-time" min="0" step="0.25" placeholder="Ej. 1.5">
+                                        <span class="unit">h</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="calc-post-fixed">Costo Fijo Adicional</label>
+                                    <div class="input-unit">
+                                        <span class="currency-symbol">$</span>
+                                        <input type="number" id="calc-post-fixed" min="0" step="1" placeholder="Ej. 5000">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Márgenes y Descuentos Accordion -->
+                            <details class="accordion-details">
+                                <summary class="accordion-summary">
+                                    <span>Ajustes Rápidos de Márgenes</span>
+                                    <svg viewBox="0 0 24 24" class="arrow-icon"><path d="M7 10l5 5 5-5z"/></svg>
+                                </summary>
+                                <div class="accordion-content">
+                                    <div class="form-group">
+                                        <label for="calc-margin-fail">Margen de Error / Falla (%)</label>
+                                        <input type="range" id="calc-margin-fail" min="0" max="50" step="1" value="10">
+                                        <div class="range-value"><span id="val-margin-fail">10</span>%</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calc-margin-profit">Margen de Ganancia (%)</label>
+                                        <input type="range" id="calc-margin-profit" min="0" max="300" step="5" value="50">
+                                        <div class="range-value"><span id="val-margin-profit">50</span>%</div>
+                                    </div>
+                                    
+                                    <!-- Printer Depreciation Custom Override -->
+                                    <div class="form-group checkbox-group">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" id="calc-override-depr">
+                                            <span class="checkmark"></span>
+                                            Sobrescribir costo de desgaste por hora
+                                        </label>
+                                    </div>
+                                    <div class="form-group" id="calc-override-value-group" style="display:none;">
+                                        <label for="calc-override-depr-val">Costo desgaste personalizado ($ / hora)</label>
+                                        <div class="input-unit">
+                                            <span class="currency-symbol">$</span>
+                                            <input type="number" id="calc-override-depr-val" min="0" step="1" value="0">
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+                        </form>
+                    </section>
+
+                    <!-- Results Panel -->
+                    <section class="results-panel">
+                        <div class="card glass total-card">
+                            <h3 class="total-label">Precio Total de Producción</h3>
+                            <div class="total-value" id="res-total">$0.00</div>
+                            <div class="total-sub-metrics">
+                                <span>Unitario: <strong id="res-unit-price" style="color: var(--accent-emerald); font-size: 16px;">$ 0</strong></span>
+                                <span>|</span>
+                                <span>Camas req.: <strong id="res-beds-needed" style="color: var(--primary); font-size: 15px;">1</strong></span>
+                            </div>
+                            <div class="cost-subtotals">
+                                <span>Costo Prod.: <strong id="res-subtotal">$0.00</strong></span>
+                                <span>Falla: <strong id="res-falla-cost">$0.00</strong></span>
+                                <span>Ganancia/pza: <strong id="res-ganancia-unit" style="color: var(--accent-emerald);">$0</strong></span>
+                                <span>Ganancia lote: <strong id="res-ganancia-cost">$0.00</strong></span>
+                            </div>
+                        </div>
+
+                        <!-- Cost Details Cards -->
+                        <div class="card glass breakdown-card">
+                            <h3 class="section-title">Desglose Detallado</h3>
+                            <div class="breakdown-list">
+                                <!-- Filament -->
+                                <div class="breakdown-item">
+                                    <div class="item-header">
+                                        <span class="item-name">Filamento</span>
+                                        <span class="item-val" id="res-cost-filament">$0.00</span>
+                                    </div>
+                                    <div class="progress-bar-bg"><div class="progress-bar-fill fill-filament" id="bar-filament" style="width: 0%"></div></div>
+                                </div>
+
+                                <!-- Printer Depreciation -->
+                                <div class="breakdown-item">
+                                    <div class="item-header">
+                                        <span class="item-name">Depreciación de Máquina</span>
+                                        <span class="item-val" id="res-cost-printer">$0.00</span>
+                                    </div>
+                                    <div class="progress-bar-bg"><div class="progress-bar-fill fill-printer" id="bar-printer" style="width: 0%"></div></div>
+                                </div>
+
+                                <!-- Electricity -->
+                                <div class="breakdown-item">
+                                    <div class="item-header">
+                                        <span class="item-name">Energía Eléctrica</span>
+                                        <span class="item-val" id="res-cost-electricity">$0.00</span>
+                                    </div>
+                                    <div class="progress-bar-bg"><div class="progress-bar-fill fill-electricity" id="bar-electricity" style="width: 0%"></div></div>
+                                </div>
+
+                                <!-- Labor -->
+                                <div class="breakdown-item">
+                                    <div class="item-header">
+                                        <span class="item-name">Mano de Obra</span>
+                                        <span class="item-val" id="res-cost-labor">$0.00</span>
+                                    </div>
+                                    <div class="progress-bar-bg"><div class="progress-bar-fill fill-labor" id="bar-labor" style="width: 0%"></div></div>
+                                </div>
+
+                                <!-- Post processing -->
+                                <div class="breakdown-item">
+                                    <div class="item-header">
+                                        <span class="item-name">Post-procesado</span>
+                                        <span class="item-val" id="res-cost-post">$0.00</span>
+                                    </div>
+                                    <div class="progress-bar-bg"><div class="progress-bar-fill fill-post" id="bar-post" style="width: 0%"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="calculator-actions">
+                            <button type="button" class="btn btn-secondary" id="btn-reset-calc">Limpiar Campos</button>
+                            <button type="button" class="btn btn-primary btn-glow" id="btn-export-pdf">
+                                <svg viewBox="0 0 24 24" class="btn-icon"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                                Descargar Cotización PDF
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- TAB: FILAMENTS -->
+            <div id="tab-filaments" class="tab-content">
+                <div class="content-header">
+                    <h2>Inventario de Filamentos</h2>
+                    <button class="btn btn-primary" id="btn-add-filament-modal">Añadir Filamento</button>
+                </div>
+                <div class="grid-profiles" id="filaments-container">
+                    <!-- Tarjetas de filamento dinámicas -->
+                </div>
+            </div>
+
+            <!-- TAB: PRINTERS -->
+            <div id="tab-printers" class="tab-content">
+                <div class="content-header">
+                    <h2>Mis Impresoras 3D</h2>
+                    <button class="btn btn-primary" id="btn-add-printer-modal">Añadir Impresora</button>
+                </div>
+                <div class="grid-profiles" id="printers-container">
+                    <!-- Tarjetas de impresora dinámicas -->
+                </div>
+            </div>
+
+            <!-- TAB: SETTINGS -->
+            <div id="tab-settings" class="tab-content">
+                <div class="max-width-container">
+                    <section class="card glass">
+                        <h2>Ajustes Globales</h2>
+                        <form id="settings-form">
+                            <div class="form-group">
+                                <label for="set-electricity">Costo de Energía Eléctrica (por kWh)</label>
+                                <div class="input-unit">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" id="set-electricity" min="0" step="0.01" placeholder="Ej. 0.15" required>
+                                </div>
+                                <span class="help-text">El costo promedio que te cobra tu compañía eléctrica por cada kWh consumido.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="set-labor">Tarifa de Mano de Obra (por hora)</label>
+                                <div class="input-unit">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" id="set-labor" min="0" step="1" placeholder="Ej. 5000" required>
+                                </div>
+                                <span class="help-text">Tu costo/tarifa por hora para preparación, laminación y mantenimiento de archivos.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="set-post-labor">Tarifa de Mano de Obra de Post-procesado (por hora)</label>
+                                <div class="input-unit">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" id="set-post-labor" min="0" step="1" placeholder="Ej. 5000" required>
+                                </div>
+                                <span class="help-text">Tu costo/tarifa por hora para tareas como lijado, pintado, limpieza de soportes o ensamble.</span>
+                            </div>
+
+                            <div class="form-section-divider">Márgenes por Defecto</div>
+                            
+                            <div class="grid-2-col">
+                                <div class="form-group">
+                                    <label for="set-margin-fail">Porcentaje de Fallas (%)</label>
+                                    <div class="input-unit">
+                                        <input type="number" id="set-margin-fail" min="0" max="100" required>
+                                        <span class="unit">%</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="set-margin-profit">Porcentaje de Ganancia (%)</label>
+                                    <div class="input-unit">
+                                        <input type="number" id="set-margin-profit" min="0" required>
+                                        <span class="unit">%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" id="btn-save-settings">Guardar Ajustes</button>
+                        </form>
+                    </section>
+
+                    <section class="card glass danger-zone">
+                        <h2 class="danger-title">Zona de Peligro</h2>
+                        <p>Estas acciones borrarán o modificarán irreversiblemente tus perfiles locales.</p>
+                        <div class="danger-actions">
+                            <button type="button" class="btn btn-danger" id="btn-reset-db">Restablecer Datos por Defecto</button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="app-footer">
+            <p>&copy; 2026 3D Cost Studio - Desarrollado para talleres de impresión 3D</p>
+        </footer>
+    </div>
+
+    <!-- MODAL: FILAMENT FORM (Añadir / Editar) -->
+    <div id="modal-filament" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3 id="modal-filament-title">Añadir Filamento</h3>
+                <button class="close-btn" id="btn-close-filament-modal">&times;</button>
+            </div>
+            <form id="modal-filament-form">
+                <input type="hidden" id="modal-filament-id">
+                
+                <div class="form-group">
+                    <label for="modal-filament-name">Nombre / Marca del Filamento</label>
+                    <input type="text" id="modal-filament-name" placeholder="Ej. Hatchbox PLA Rojo" required>
+                </div>
+
+                <div class="grid-2-col">
+                    <div class="form-group">
+                        <label for="modal-filament-type">Tipo de Plástico</label>
+                        <select id="modal-filament-type" required>
+                            <option value="PLA">PLA</option>
+                            <option value="PLA+">PLA+</option>
+                            <option value="PETG">PETG</option>
+                            <option value="ABS">ABS</option>
+                            <option value="ASA">ASA</option>
+                            <option value="TPU">TPU</option>
+                            <option value="Nylon">Nylon</option>
+                            <option value="PC">Policarbonato</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-filament-weight">Peso del Carrete (g)</label>
+                        <div class="input-unit">
+                            <input type="number" id="modal-filament-weight" min="1" value="1000" required>
+                            <span class="unit">g</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="modal-filament-price">Precio del Carrete ($)</label>
+                    <div class="input-unit">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="modal-filament-price" min="1" step="1" placeholder="Ej. 22000" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-filament">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: PRINTER FORM (Añadir / Editar) -->
+    <div id="modal-printer" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3 id="modal-printer-title">Añadir Impresora</h3>
+                <button class="close-btn" id="btn-close-printer-modal">&times;</button>
+            </div>
+            <form id="modal-printer-form">
+                <input type="hidden" id="modal-printer-id">
+
+                <div class="form-group">
+                    <label for="modal-printer-name">Nombre / Modelo de la Impresora</label>
+                    <input type="text" id="modal-printer-name" placeholder="Ej. Prusa i3 MK4" required>
+                </div>
+
+                <div class="grid-2-col">
+                    <div class="form-group">
+                        <label for="modal-printer-power">Consumo de Energía (W)</label>
+                        <div class="input-unit">
+                            <input type="number" id="modal-printer-power" min="1" placeholder="Ej. 350" required>
+                            <span class="unit">W</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-printer-cost">Costo de Compra de la Impresora</label>
+                        <div class="input-unit">
+                            <span class="currency-symbol">$</span>
+                            <input type="number" id="modal-printer-cost" min="1" step="1" placeholder="Ej. 350000" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="modal-printer-lifetime">Vida Útil Estimada (horas de impresión)</label>
+                    <div class="input-unit">
+                        <input type="number" id="modal-printer-lifetime" min="1" placeholder="Ej. 3000" required>
+                        <span class="unit">h</span>
+                    </div>
+                    <span class="help-text">Horas de impresión estimadas antes de requerir mantenimiento mayor o reemplazo.</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Costo de Depreciación Auto-calculado:</label>
+                    <div class="depr-calc-preview" id="modal-depr-calc-preview">
+                        $0.00 / hora de uso
+                    </div>
+                </div>
+
+                <!-- Manual Override setting inside printer profile -->
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="modal-printer-override-depr">
+                        <span class="checkmark"></span>
+                        Establecer tarifa de depreciación manual fija
+                    </label>
+                </div>
+
+                <div class="form-group" id="modal-printer-override-val-group" style="display:none;">
+                    <label for="modal-printer-override-val">Costo por hora personalizado ($)</label>
+                    <div class="input-unit">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="modal-printer-override-val" min="0" step="1" value="0">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-printer">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- OFFSCREEN PDF TEMPLATE (RENDER AREA) -->
+    <div id="pdf-invoice-template" style="position: absolute; left: -9999px; top: -9999px;">
+        <div class="invoice-container">
+            <div class="invoice-header">
+                <div class="invoice-title-section">
+                    <h2>3D COST STUDIO</h2>
+                    <p class="invoice-subtitle">Estimación de Costo y Cotización de Impresión 3D</p>
+                </div>
+                <div class="invoice-date-section">
+                    <p><strong>Fecha:</strong> <span id="pdf-date">--/--/----</span></p>
+                    <p><strong>Moneda:</strong> Pesos ($)</p>
+                </div>
+            </div>
+
+            <div class="invoice-divider"></div>
+
+            <div class="invoice-details-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div>
+                    <h4>Detalles del Proyecto</h4>
+                    <p><strong>Material Usado:</strong> <span id="pdf-filament-name">PLA Genérico</span></p>
+                    <p><strong>Peso Pieza:</strong> <span id="pdf-weight">0</span> g</p>
+                    <p><strong>Impresora:</strong> <span id="pdf-printer-name">Ender 3</span></p>
+                    <p><strong>Ingreso de Tiempo:</strong> <span id="pdf-time-mode">Por Pieza</span></p>
+                </div>
+                <div>
+                    <h4>Producción en Lote</h4>
+                    <p><strong>Cantidad Total:</strong> <span id="pdf-qty">1</span> piezas</p>
+                    <p><strong>Piezas por Cama:</strong> <span id="pdf-pieces-bed">1</span></p>
+                    <p><strong>Camas Necesarias:</strong> <span id="pdf-beds-needed">1</span></p>
+                    <p><strong>Desperdicio por Cama:</strong> <span id="pdf-waste-bed">0</span> g</p>
+                </div>
+                <div>
+                    <h4>Tiempos y Post-procesado</h4>
+                    <p><strong>Tiempo de Impresión:</strong> <span id="pdf-time">0</span></p>
+                    <p><strong>Prep. y Slicing:</strong> <span id="pdf-prep-time">0</span> h</p>
+                    <p><strong>Post-procesado:</strong> <span id="pdf-post-time">0</span> h</p>
+                    <p><strong>Costo Fijo Post:</strong> $<span id="pdf-post-fixed">0</span></p>
+                </div>
+            </div>
+
+            <div class="invoice-divider"></div>
+
+            <h4>Desglose de Costos de Fabricación</h4>
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th>Concepto / Componente</th>
+                        <th class="text-right">Costo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Costo del Material (Filamento)</td>
+                        <td class="text-right" id="pdf-table-filament">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Costo de Depreciación de Máquina</td>
+                        <td class="text-right" id="pdf-table-printer">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Costo de Energía Eléctrica</td>
+                        <td class="text-right" id="pdf-table-electricity">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Costo de Mano de Obra (Preparación/Diseño)</td>
+                        <td class="text-right" id="pdf-table-labor">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Costo de Post-procesado (Horas + Fijo)</td>
+                        <td class="text-right" id="pdf-table-post">$0.00</td>
+                    </tr>
+                    <tr class="row-subtotal">
+                        <td>Subtotal (Costo de Producción)</td>
+                        <td class="text-right" id="pdf-table-subtotal">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Margen de Riesgo / Falla (<span id="pdf-fail-percent">0</span>%)</td>
+                        <td class="text-right" id="pdf-table-fail">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Margen de Ganancia (<span id="pdf-profit-percent">0</span>%)</td>
+                        <td class="text-right" id="pdf-table-profit">$0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="invoice-total-section">
+                <div class="invoice-total-box" style="display: flex; justify-content: space-between; gap: 40px; text-align: left; width: 100%;">
+                    <div>
+                        <span>Precio Unitario</span>
+                        <strong id="pdf-unit-price" style="color: var(--accent-emerald);">$0</strong>
+                    </div>
+                    <div style="text-align: right;">
+                        <span>Precio Total Producción</span>
+                        <strong id="pdf-invoice-total">$0</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="invoice-footer">
+                <p>Esta es una estimación de costo basada en los parámetros técnicos especificados por el taller.</p>
+                <p>Calculado con 3D Cost Studio.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- app.js -->
+    <script src="app.js"></script>
+</body>
+</html>
